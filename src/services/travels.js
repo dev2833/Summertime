@@ -33,13 +33,14 @@ async function create(travel) {
   );
 
 
-  let message = "Error in creating data";
+  let err = null;
 
   if (result.affectedRows) {
-    message = "data created successfully";
+    return { err, result };
   }
 
-  return { message };
+  err = "Error in updating data";
+  return { err, result };
 }
 
 async function update(id, travel) {

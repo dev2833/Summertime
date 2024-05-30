@@ -33,7 +33,7 @@ router.post('/', upload.single('csvfile'), (req, res) => {
       // Adjust the query according to your table structure
 
       try {
-        console.log("dd", await travels.create(row));
+        await travels.create(row);
       } catch (err) {
         console.error(`Error while analyzing CSV`, err.message);
         next(err);
