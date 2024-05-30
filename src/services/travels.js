@@ -18,11 +18,12 @@ async function getBookings(BookingNumber = null) {
 
 async function create(travel) {
 
-  const result = await db.query(
-    `INSERT INTO travel 
+  try {
+    const result = await db.query(
+      `INSERT INTO travel 
     (DepartureDate, BookingNumber, TO_Name, FlightNumber, FlightDepTime, PickUpTime, PickupDate, Hotel, PickupPoint, ServiceType, FlyFrom, FlyTo, Language) 
     VALUES 
-    (STR_TO_DATE('${travel.DepartureDate}', '%d-%b-%y'), ${travel.BookingNumber}, '${travel.TO_Name}', '${travel.FlightNumber}', '${travel.FlightDepTime}', '${travel.PickUpTime}', STR_TO_DATE('${travel.PickupDate}', '%d-%b-%y'), '${travel.Hotel}', '${travel.PickupPoint}', '${travel.ServiceType}', '${travel.FlyFrom}', '${travel.FlyTo}', '${travel.Language}')
+    (STR_TO_DATE('${travel.DepartureDate}', '%d %b %Y'), ${travel.BookingNumber}, '${travel.TO_Name}', '${travel.FlightNumber}', '${travel.FlightDepTime}', '${travel.PickUpTime}', STR_TO_DATE('${travel.PickupDate}', '%d %b %Y'), '${travel.Hotel}', '${travel.PickupPoint}', '${travel.ServiceType}', '${travel.FlyFrom}', '${travel.FlyTo}', '${travel.Language}')
     ON DUPLICATE KEY UPDATE
     DepartureDate = VALUES(DepartureDate),
     TO_Name = VALUES(TO_Name),
@@ -36,17 +37,24 @@ async function create(travel) {
     FlyFrom = VALUES(FlyFrom),
     FlyTo = VALUES(FlyTo),
     Language = VALUES(Language)`
-  );
+    );
 
 
-  let err = null;
+    let err = null;
 
-  if (result.affectedRows) {
-    return { err, result };
+    // Fetch the updated row
+    // const [rows] = await db.query(
+    //   `SELECT * FROM travel WHERE BookingNumber = ?`,
+    //   [travel.BookingNumber]
+    // );
+
+    // Return the updated row
+    return { err, result: travel };
+  } catch (error) {
+    err = "Error in updating data";
+    return { err, result: [] };
   }
 
-  err = "Error in updating data";
-  return { err, result };
 }
 
 async function update(id, travel) {
@@ -74,7 +82,7 @@ async function remove(req) {
 
   if (departureDate) {
     result = await db.query(
-      `DELETE FROM travel WHERE DepartureDate >= STR_TO_DATE(?, '%d-%b-%y')`,
+      `DELETE FROM travel WHERE DepartureDate >= STR_TO_DATE(?, '%d %b %Y')`,
       [departureDate]
     );
     message = 'Booking data deleted by DepartureDate successfully'

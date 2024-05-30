@@ -23,34 +23,59 @@ router.get("/:id?", async function (req, res, next) {
 
 
 // Define a route to handle CSV file upload
-router.post('/', upload.single('csvfile'), (req, res) => {
+router.post('/', upload.single('csvfile'), async (req, res, next) => {
   const filePath = path.join(__dirname, '../../', req.file.path);
+  let importedData = [];
+  let promises = [];
 
-  // Read and parse the CSV file
-  fs.createReadStream(filePath)
-    .pipe(csv())
-    .on('data', async (row) => {
-      // Assuming your CSV columns match your table columns, you can insert/update rows here
-      // Adjust the query according to your table structure
+  try {
+    await new Promise((resolve, reject) => {
+      fs.createReadStream(filePath)
+        .pipe(csv())
+        .on('data', (row) => {
+          // Create a promise for each row and store it in the promises array
+          const promise = travels.create(row)
+            .then(data => {
+              if (data) {
+                importedData.push(data?.result);
+              }
+            })
+            .catch(err => {
+              console.error(`Error while analyzing CSV:`, err.message);
+              reject(err);
+            });
 
-      try {
-        await travels.create(row);
-      } catch (err) {
-        console.error(`Error while analyzing CSV`, err.message);
-        next(err);
-      }
-    })
-    .on('end', () => {
-      console.log('CSV file successfully processed');
-      res.send('CSV file successfully processed');
-      // Delete the uploaded file after processing
-      fs.unlinkSync(filePath);
-    })
-    .on('error', (err) => {
-      console.error('Error processing CSV file:', err);
-      res.status(500).send('Error processing CSV file');
+          promises.push(promise);
+        })
+        .on('end', () => {
+          // Wait for all promises to resolve before proceeding
+          Promise.all(promises)
+            .then(() => {
+              console.log('CSV file successfully processed');
+              resolve();
+            })
+            .catch(err => {
+              reject(err);
+            });
+        })
+        .on('error', (err) => {
+          console.error('Error processing CSV file:', err);
+          reject(err);
+        });
     });
+
+    // Delete the uploaded file after processing
+    fs.unlinkSync(filePath);
+
+    // Send the response after all rows have been processed
+    res.json({ data: importedData, message: 'CSV file successfully processed' });
+  } catch (err) {
+    console.error('Error processing CSV file:', err);
+    res.status(500).send('Error processing CSV file');
+  }
 });
+
+
 
 // /* POST */
 // router.post("/", async function (req, res, next) {
