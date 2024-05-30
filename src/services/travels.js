@@ -99,10 +99,32 @@ async function search(id) {
   };
 }
 
+async function cleanDatabase() {
+  // Calculate the date 5 days ago from today
+  const fiveDaysAgo = new Date();
+  fiveDaysAgo.setDate(fiveDaysAgo.getDate() - 5);
+
+  // Convert the date to MySQL DATE format
+  const formattedDate = `${fiveDaysAgo.getFullYear()}-${(fiveDaysAgo.getMonth() + 1).toString().padStart(2, '0')}-${fiveDaysAgo.getDate().toString().padStart(2, '0')}`;
+
+  // Delete entries older than 5 days from the DepartureDate
+  const result = await db.query(
+    `DELETE FROM travel WHERE DepartureDate < ?`,
+    [formattedDate]
+  );
+
+  if (result) {
+    console.log('Number of rows deleted:', result.affectedRows);
+  }
+  return;
+}
+
+
 module.exports = {
   getBookings,
   create,
   update,
   remove,
-  search
+  search,
+  cleanDatabase
 };
