@@ -42,12 +42,6 @@ async function create(travel) {
 
     let err = null;
 
-    // Fetch the updated row
-    // const [rows] = await db.query(
-    //   `SELECT * FROM travel WHERE BookingNumber = ?`,
-    //   [travel.BookingNumber]
-    // );
-
     // Return the updated row
     return { err, result: travel };
   } catch (error) {
@@ -98,15 +92,6 @@ async function remove(req) {
   return { message };
 }
 
-async function search(id) {
-  const rows = await db.callSpSearch(id);
-  const data = "";
-
-  return {
-    data
-  };
-}
-
 async function cleanDatabase() {
   // Calculate the date 5 days ago from today
   const fiveDaysAgo = new Date();
@@ -133,6 +118,5 @@ module.exports = {
   create,
   update,
   remove,
-  search,
   cleanDatabase
 };

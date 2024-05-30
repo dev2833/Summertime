@@ -13,7 +13,6 @@ const upload = multer({ dest: 'uploads/' });
 /* GET */
 router.get("/:id?", async function (req, res, next) {
   try {
-    console.log("id", req.params.id)
     res.json(await travels.getBookings(req.params.id));
   } catch (err) {
     console.error(`Error while getting data `, err.message);
@@ -75,18 +74,6 @@ router.post('/', upload.single('csvfile'), async (req, res, next) => {
   }
 });
 
-
-
-// /* POST */
-// router.post("/", async function (req, res, next) {
-//   try {
-//     res.json(await travels.create(req.body));
-//   } catch (err) {
-//     console.error(`Error while creating data`, err.message);
-//     next(err);
-//   }
-// });
-
 /* DELETE */
 router.delete("/", async function (req, res, next) {
   try {
@@ -97,12 +84,4 @@ router.delete("/", async function (req, res, next) {
   }
 });
 
-// router.get("/:id", async function (req, res, next) {
-//   try {
-//     res.json(await travels.search(req.params.id));
-//   } catch (err) {
-//     console.error(`Error while searching data `, err.message);
-//     next(err);
-//   }
-// });
 module.exports = router;
