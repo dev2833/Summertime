@@ -1,12 +1,18 @@
 const db = require("./db");
 
-async function getMultiple() {
-  const data = await db.query(
-    `SELECT * FROM travel`
-  );
+async function getBookings(BookingNumber = null) {
+  let query = `SELECT * FROM travel`;
+  if (BookingNumber) {
+    query += ` WHERE BookingNumber='${BookingNumber}'`
+  }
+  const data = await db.query(query);
+  let message = 'Feteched bookings successfully!';
+  if (data.length == 0) {
+    message = 'No bookings exists.'
+  }
 
   return {
-    data,
+    data, message
   };
 }
 
@@ -66,19 +72,19 @@ async function remove(req) {
   let result;
   let message = "Error in deleting data";
 
-  if (bookingNumber) {
-    result = await db.query(
-      `DELETE FROM travel WHERE BookingNumber=${bookingNumber}`
-    );
-    message = 'Booking data deleted by BookingNumber successfully'
-  }
-
   if (departureDate) {
     result = await db.query(
       `DELETE FROM travel WHERE DepartureDate >= STR_TO_DATE(?, '%d-%b-%y')`,
       [departureDate]
     );
     message = 'Booking data deleted by DepartureDate successfully'
+  }
+
+  if (bookingNumber) {
+    result = await db.query(
+      `DELETE FROM travel WHERE BookingNumber=${bookingNumber}`
+    );
+    message = 'Booking data deleted by BookingNumber successfully'
   }
 
   return { message };
@@ -94,7 +100,7 @@ async function search(id) {
 }
 
 module.exports = {
-  getMultiple,
+  getBookings,
   create,
   update,
   remove,

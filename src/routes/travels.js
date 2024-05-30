@@ -10,10 +10,11 @@ const travels = require("../services/travels");
 // Configure multer for file uploads
 const upload = multer({ dest: 'uploads/' });
 
-/* GET all */
-router.get("/", async function (req, res, next) {
+/* GET */
+router.get("/:id?", async function (req, res, next) {
   try {
-    res.json(await travels.getMultiple());
+    console.log("id", req.params.id)
+    res.json(await travels.getBookings(req.params.id));
   } catch (err) {
     console.error(`Error while getting data `, err.message);
     next(err);
@@ -61,16 +62,6 @@ router.post('/', upload.single('csvfile'), (req, res) => {
 //   }
 // });
 
-/* PUT */
-router.put("/:id", async function (req, res, next) {
-  try {
-    res.json(await travels.update(req.params.id, req.body));
-  } catch (err) {
-    console.error(`Error while updating data`, err.message);
-    next(err);
-  }
-});
-
 /* DELETE */
 router.delete("/", async function (req, res, next) {
   try {
@@ -81,12 +72,12 @@ router.delete("/", async function (req, res, next) {
   }
 });
 
-router.get("/:id", async function (req, res, next) {
-  try {
-    res.json(await travels.search(req.params.id));
-  } catch (err) {
-    console.error(`Error while searching data `, err.message);
-    next(err);
-  }
-});
+// router.get("/:id", async function (req, res, next) {
+//   try {
+//     res.json(await travels.search(req.params.id));
+//   } catch (err) {
+//     console.error(`Error while searching data `, err.message);
+//     next(err);
+//   }
+// });
 module.exports = router;
