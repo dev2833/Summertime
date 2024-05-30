@@ -72,9 +72,9 @@ router.put("/:id", async function (req, res, next) {
 });
 
 /* DELETE */
-router.delete("/:id", async function (req, res, next) {
+router.delete("/", async function (req, res, next) {
   try {
-    res.json(await travels.remove(req.params.id));
+    res.json(await travels.remove(req));
   } catch (err) {
     console.error(`Error while deleting data`, err.message);
     next(err);

@@ -60,15 +60,25 @@ async function update(id, travel) {
   return { message };
 }
 
-async function remove(id) {
-  const result = await db.query(
-    `DELETE FROM data WHERE id=${id}`
-  );
-
+async function remove(req) {
+  const departureDate = req.body.DepartureDate;
+  const bookingNumber = req.body.BookingNumber;
+  let result;
   let message = "Error in deleting data";
 
-  if (result.affectedRows) {
-    message = "data deleted successfully";
+  if (bookingNumber) {
+    result = await db.query(
+      `DELETE FROM travel WHERE BookingNumber=${bookingNumber}`
+    );
+    message = 'Booking data deleted by BookingNumber successfully'
+  }
+
+  if (departureDate) {
+    result = await db.query(
+      `DELETE FROM travel WHERE DepartureDate >= STR_TO_DATE(?, '%d-%b-%y')`,
+      [departureDate]
+    );
+    message = 'Booking data deleted by DepartureDate successfully'
   }
 
   return { message };
