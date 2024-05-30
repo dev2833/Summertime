@@ -1,6 +1,6 @@
 I need a backend for a react app. Functions:
 1. Upload CSV to database
-- if field (booking) exist updated that row- if field (booking) don't exist add a new row
+- if field (booking) exist updated that row, if field (booking) don't exist add a new row
 - on successful import display imported data
 - on failed import return error message
 - After successful import, delete the csv file, so it doesn't clutter the server.

@@ -5,9 +5,9 @@ USE summertime;
 
 # CREATE TABLE IF NOT EXISTS travel (
 CREATE TABLE travel (
- id INT AUTO_INCREMENT PRIMARY KEY,
+ id INT AUTO_INCREMENT,
  DepartureDate DATE,
- BookingNumber INT,
+ BookingNumber INT PRIMARY KEY,
  TO_Name VARCHAR(255),
  FlightNumber VARCHAR(255),
  FlightDepTime TIME,

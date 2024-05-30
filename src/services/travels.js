@@ -11,12 +11,27 @@ async function getMultiple() {
 }
 
 async function create(travel) {
+
   const result = await db.query(
     `INSERT INTO travel 
     (DepartureDate, BookingNumber, TO_Name, FlightNumber, FlightDepTime, PickUpTime, PickupDate, Hotel, PickupPoint, ServiceType, FlyFrom, FlyTo, Language) 
     VALUES 
-    (STR_TO_DATE('${travel.DepartureDate}', '%d-%b-%y'), ${travel.BookingNumber}, '${travel.TO_Name}', '${travel.FlightNumber}', '${travel.FlightDepTime}', '${travel.PickUpTime}', STR_TO_DATE('${travel.PickupDate}', '%d-%b-%y'), '${travel.Hotel}', '${travel.PickupPoint}', '${travel.ServiceType}', '${travel.FlyFrom}', '${travel.FlyTo}', '${travel.Language}')`
+    (STR_TO_DATE('${travel.DepartureDate}', '%d-%b-%y'), ${travel.BookingNumber}, '${travel.TO_Name}', '${travel.FlightNumber}', '${travel.FlightDepTime}', '${travel.PickUpTime}', STR_TO_DATE('${travel.PickupDate}', '%d-%b-%y'), '${travel.Hotel}', '${travel.PickupPoint}', '${travel.ServiceType}', '${travel.FlyFrom}', '${travel.FlyTo}', '${travel.Language}')
+    ON DUPLICATE KEY UPDATE
+    DepartureDate = VALUES(DepartureDate),
+    TO_Name = VALUES(TO_Name),
+    FlightNumber = VALUES(FlightNumber),
+    FlightDepTime = VALUES(FlightDepTime),
+    PickUpTime = VALUES(PickUpTime),
+    PickupDate = VALUES(PickupDate),
+    Hotel = VALUES(Hotel),
+    PickupPoint = VALUES(PickupPoint),
+    ServiceType = VALUES(ServiceType),
+    FlyFrom = VALUES(FlyFrom),
+    FlyTo = VALUES(FlyTo),
+    Language = VALUES(Language)`
   );
+
 
   let message = "Error in creating data";
 
