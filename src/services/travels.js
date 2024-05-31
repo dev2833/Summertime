@@ -51,23 +51,6 @@ async function create(travel) {
 
 }
 
-async function update(id, travel) {
-  const result = await db.query(
-    `UPDATE data 
-    SET name="${travel.name}", released_year=${travel.released_year}, githut_rank=${travel.githut_rank}, 
-    pypl_rank=${travel.pypl_rank}, tiobe_rank=${travel.tiobe_rank} 
-    WHERE id=${id}`
-  );
-
-  let message = "Error in updating data";
-
-  if (result.affectedRows) {
-    message = "data updated successfully";
-  }
-
-  return { message };
-}
-
 async function remove(req) {
   const departureDate = req.body.DepartureDate;
   const bookingNumber = req.body.BookingNumber;
@@ -116,7 +99,6 @@ async function cleanDatabase() {
 module.exports = {
   getBookings,
   create,
-  update,
   remove,
   cleanDatabase
 };
